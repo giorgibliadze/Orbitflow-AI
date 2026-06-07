@@ -14,18 +14,37 @@ export default function RadialOrbitalTimeline({
   const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
   const [rotationAngle, setRotationAngle] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const activeItem = timelineData.find((item) => item.id === activeNodeId);
 
   useEffect(() => {
-    if (!autoRotate) return;
+    const checkScreen = () => {
+      const mobile = window.innerWidth < 640;
+      setIsMobile(mobile);
+
+      if (mobile) {
+        setAutoRotate(false);
+      } else {
+        setAutoRotate(true);
+      }
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  useEffect(() => {
+    if (!autoRotate || isMobile) return;
 
     const timer = setInterval(() => {
       setRotationAngle((prev) => Number(((prev + 0.25) % 360).toFixed(3)));
     }, 50);
 
     return () => clearInterval(timer);
-  }, [autoRotate]);
+  }, [autoRotate, isMobile]);
 
   const getRelatedItems = (itemId: number) => {
     const item = timelineData.find((i) => i.id === itemId);
@@ -40,7 +59,7 @@ export default function RadialOrbitalTimeline({
   const toggleItem = (id: number) => {
     if (activeNodeId === id) {
       setActiveNodeId(null);
-      setAutoRotate(true);
+      if (!isMobile) setAutoRotate(true);
     } else {
       setActiveNodeId(id);
       setAutoRotate(false);
@@ -49,9 +68,7 @@ export default function RadialOrbitalTimeline({
 
   const calculateNodePosition = (index: number, total: number) => {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius =
-      typeof window !== "undefined" && window.innerWidth < 640 ? 130 : 245;
-
+    const radius = isMobile ? 130 : 245;
     const radian = (angle * Math.PI) / 180;
 
     return {
@@ -96,7 +113,7 @@ export default function RadialOrbitalTimeline({
       className="relative mx-auto flex h-[680px] w-full max-w-5xl items-start justify-center overflow-visible pt-20 sm:h-[760px] sm:items-center sm:pt-0"
       onClick={() => {
         setActiveNodeId(null);
-        setAutoRotate(true);
+        if (!isMobile) setAutoRotate(true);
       }}
     >
       <div className="absolute top-20 h-[310px] w-[310px] rounded-full border border-white/5 sm:top-auto sm:h-[560px] sm:w-[560px]" />
