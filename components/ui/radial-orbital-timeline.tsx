@@ -49,7 +49,9 @@ export default function RadialOrbitalTimeline({
 
   const calculateNodePosition = (index: number, total: number) => {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius = 245;
+    const radius =
+      typeof window !== "undefined" && window.innerWidth < 640 ? 130 : 245;
+
     const radian = (angle * Math.PI) / 180;
 
     return {
@@ -76,19 +78,32 @@ export default function RadialOrbitalTimeline({
     }
   };
 
+  const getStatusLabel = (status: TimelineItem["status"]) => {
+    switch (status) {
+      case "completed":
+        return "დასრულებულია";
+      case "in-progress":
+        return "მიმდინარეობს";
+      case "pending":
+        return "მზადდება";
+      default:
+        return "მზადდება";
+    }
+  };
+
   return (
     <div
-      className="relative mx-auto flex h-[760px] w-full max-w-5xl items-center justify-center overflow-visible"
+      className="relative mx-auto flex h-[680px] w-full max-w-5xl items-start justify-center overflow-visible pt-20 sm:h-[760px] sm:items-center sm:pt-0"
       onClick={() => {
         setActiveNodeId(null);
         setAutoRotate(true);
       }}
     >
-      <div className="absolute h-[560px] w-[560px] rounded-full border border-white/5" />
-      <div className="absolute h-[510px] w-[510px] rounded-full border border-white/10" />
+      <div className="absolute top-20 h-[310px] w-[310px] rounded-full border border-white/5 sm:top-auto sm:h-[560px] sm:w-[560px]" />
+      <div className="absolute top-[95px] h-[280px] w-[280px] rounded-full border border-white/10 sm:top-auto sm:h-[510px] sm:w-[510px]" />
 
-      <div className="absolute z-20 flex h-20 w-20 items-center justify-center rounded-full border border-violet-500/40 bg-violet-500/20 shadow-2xl shadow-violet-500/20 backdrop-blur-xl">
-        <Sparkles size={28} className="text-violet-300" />
+      <div className="absolute top-[195px] z-20 flex h-16 w-16 items-center justify-center rounded-full border border-violet-500/40 bg-violet-500/20 shadow-2xl shadow-violet-500/20 backdrop-blur-xl sm:top-auto sm:h-20 sm:w-20">
+        <Sparkles size={22} className="text-violet-300 sm:size-7" />
       </div>
 
       {timelineData.map((item, index) => {
@@ -101,7 +116,7 @@ export default function RadialOrbitalTimeline({
           <button
             key={item.id}
             type="button"
-            className="absolute cursor-pointer transition-all duration-700"
+            className="absolute top-[205px] cursor-pointer transition-all duration-700 sm:top-1/2"
             style={{
               transform: `translate(${position.x}px, ${position.y}px)`,
               opacity: isActive ? 1 : activeNodeId ? 0.28 : position.opacity,
@@ -113,22 +128,22 @@ export default function RadialOrbitalTimeline({
             }}
           >
             <div
-              className={`mx-auto flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+              className={`mx-auto flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-300 sm:h-11 sm:w-11 ${
                 isActive
-                  ? "scale-150 border-violet-300 bg-violet-500/30 shadow-lg shadow-violet-500/30"
+                  ? "scale-125 border-violet-300 bg-violet-500/30 shadow-lg shadow-violet-500/30 sm:scale-150"
                   : isRelated
                   ? "border-violet-400/70 bg-violet-500/20"
                   : "border-white/20 bg-white/5"
               }`}
             >
               <Icon
-                size={16}
+                size={15}
                 className={isActive ? "text-violet-100" : "text-white/60"}
               />
             </div>
 
             <span
-              className={`mt-3 block whitespace-nowrap text-xs font-medium ${
+              className={`mt-2 block whitespace-nowrap text-[10px] font-medium sm:mt-3 sm:text-xs ${
                 isActive ? "text-white" : "text-white/45"
               }`}
             >
@@ -140,7 +155,7 @@ export default function RadialOrbitalTimeline({
 
       {activeItem && (
         <div
-          className="absolute left-1/2 top-[455px] z-[999] w-[360px] -translate-x-1/2 rounded-2xl border p-5"
+          className="absolute left-1/2 top-[410px] z-[999] w-[calc(100vw-32px)] max-w-[360px] -translate-x-1/2 rounded-2xl border p-4 sm:top-[455px] sm:w-[360px] sm:p-5"
           style={{
             background: "rgba(10,10,20,0.98)",
             backdropFilter: "blur(20px)",
@@ -151,18 +166,14 @@ export default function RadialOrbitalTimeline({
         >
           <div className="mb-3 flex items-center justify-between">
             <span
-              className={`rounded-full border px-2 py-0.5 text-xs font-medium ${getStatusColor(
+              className={`rounded-full border px-2 py-0.5 text-[11px] font-medium sm:text-xs ${getStatusColor(
                 activeItem.status
               )}`}
             >
-              {activeItem.status === "completed"
-                ? "Completed"
-                : activeItem.status === "in-progress"
-                ? "In Progress"
-                : "Pending"}
+              {getStatusLabel(activeItem.status)}
             </span>
 
-            <span className="font-mono text-xs text-white/35">
+            <span className="font-mono text-[11px] text-white/35 sm:text-xs">
               {activeItem.date}
             </span>
           </div>
@@ -179,7 +190,7 @@ export default function RadialOrbitalTimeline({
             <div className="mb-2 flex justify-between text-xs">
               <span className="flex items-center gap-1 text-white/40">
                 <Zap size={10} />
-                Progress
+                პროგრესი
               </span>
 
               <span className="font-mono text-violet-300">
@@ -203,7 +214,7 @@ export default function RadialOrbitalTimeline({
               <div className="mb-2 flex items-center gap-1">
                 <Link size={10} className="text-white/30" />
                 <span className="text-xs uppercase tracking-wider text-white/30">
-                  Connected
+                  დაკავშირებული
                 </span>
               </div>
 
