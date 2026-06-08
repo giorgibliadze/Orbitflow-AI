@@ -90,7 +90,10 @@ const orbitalTimelineData: TimelineItem[] = [
 
 export default function TimelineSection() {
   return (
-    <section id="timeline" className="relative px-6 py-24 md:py-32 overflow-visible">
+    <section
+      id="timeline"
+      className="relative overflow-visible px-6 py-24 md:py-32"
+    >
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -99,7 +102,7 @@ export default function TimelineSection() {
         }}
       />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto mt-32 md:mt-36 max-w-7xl">
         <FadeIn className="mb-12 text-center">
           <div
             className="mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-violet-300"
@@ -125,6 +128,7 @@ export default function TimelineSection() {
 
           <p className="mx-auto max-w-2xl text-base text-white/45 md:text-lg">
             პროცესი იყოფა მკაფიო ეტაპებად — იდეიდან გაშვებამდე.
+            <br />
             დააჭირეთ თითოეულ ეტაპს დეტალების სანახავად.
           </p>
         </FadeIn>
